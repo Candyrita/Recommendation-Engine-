@@ -1,0 +1,252 @@
+
+<h2 class="sr-only">IRES Land Governance course recommendation quiz — 5 questions, takes about 2 minutes.</h2>
+
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{--ires-red:#a11e22;--ires-teal:#1ea19d;--ires-red-light:#f7e8e8;--ires-teal-light:#e6f5f5;--ires-red-dark:#7a1619;--ires-teal-dark:#157c79}
+  .wrap{max-width:640px;margin:0 auto;padding:1.5rem 0 2.5rem;font-family:var(--font-sans)}
+  .quiz-header{margin-bottom:1.75rem}
+  .quiz-header h1{font-size:22px;font-weight:500;color:var(--color-text-primary);margin-bottom:0.3rem}
+  .quiz-header p{font-size:15px;color:var(--color-text-secondary);line-height:1.6}
+  .time-pill{display:inline-flex;align-items:center;gap:5px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:99px;padding:4px 12px;font-size:12px;color:var(--color-text-secondary);margin-bottom:1rem}
+  .progress-bar{height:4px;background:var(--color-background-secondary);border-radius:99px;margin-bottom:2rem;overflow:hidden}
+  .progress-fill{height:100%;background:var(--ires-teal);border-radius:99px;transition:width 0.4s ease}
+  .step{display:none}.step.active{display:block}
+  .q-label{font-size:12px;color:var(--ires-teal);margin-bottom:0.4rem;letter-spacing:0.06em;text-transform:uppercase;font-weight:500}
+  .q-text{font-size:18px;font-weight:500;color:var(--color-text-primary);margin:0 0 1.2rem;line-height:1.4}
+  .options{display:flex;flex-direction:column;gap:9px}
+  .opt-btn{display:flex;align-items:center;gap:12px;background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-lg);padding:13px 16px;cursor:pointer;font-size:14px;color:var(--color-text-primary);text-align:left;transition:border-color 0.15s,background 0.15s;width:100%}
+  .opt-btn:hover{border-color:var(--ires-teal);background:var(--ires-teal-light)}
+  .opt-btn.selected{border:1.5px solid var(--ires-teal);background:var(--ires-teal-light);color:var(--ires-teal-dark)}
+  .opt-icon{width:30px;height:30px;border-radius:50%;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary)}
+  .opt-btn.selected .opt-icon{background:#b2e4e3;color:var(--ires-teal-dark);border-color:var(--ires-teal)}
+  .nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:1.4rem}
+  .btn-back{background:none;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:9px 16px;font-size:14px;color:var(--color-text-secondary);cursor:pointer}
+  .btn-back:hover{background:var(--color-background-secondary)}
+  .btn-next{background:var(--ires-teal);border:none;border-radius:var(--border-radius-md);padding:9px 20px;font-size:14px;font-weight:500;color:#fff;cursor:pointer;opacity:0.35;pointer-events:none;transition:opacity 0.2s}
+  .btn-next.ready{opacity:1;pointer-events:all}
+  .btn-next:hover{background:var(--ires-teal-dark)}
+  .step-count{font-size:13px;color:var(--color-text-secondary)}
+
+  .email-wrap{background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-lg);padding:1.5rem}
+  .email-wrap h2{font-size:18px;font-weight:500;margin-bottom:0.3rem;color:var(--color-text-primary)}
+  .email-wrap p{font-size:14px;color:var(--color-text-secondary);margin-bottom:1.25rem;line-height:1.6}
+  .email-wrap label{font-size:13px;color:var(--color-text-secondary);display:block;margin-bottom:5px}
+  .email-wrap input[type=text],.email-wrap input[type=email]{width:100%;margin-bottom:10px;font-size:14px}
+  .privacy-note{font-size:12px;color:var(--color-text-secondary);margin-top:10px;display:flex;align-items:flex-start;gap:6px;line-height:1.5}
+  .btn-submit{width:100%;background:var(--ires-red);border:none;border-radius:var(--border-radius-md);padding:11px;font-size:14px;font-weight:500;color:#fff;cursor:pointer;margin-top:14px}
+  .btn-submit:hover{background:var(--ires-red-dark)}
+  .err{font-size:12px;color:var(--color-text-danger);margin-top:4px;display:none}
+
+  .results-wrap{display:none;max-width:640px;margin:0 auto;padding:1.5rem 0 2rem}
+  .results-wrap.show{display:block}
+  .results-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;gap:12px;flex-wrap:wrap}
+  .results-header div h3{font-size:20px;font-weight:500;margin-bottom:0.25rem;color:var(--color-text-primary)}
+  .results-header div p{font-size:13px;color:var(--color-text-secondary)}
+  .btn-pdf{display:inline-flex;align-items:center;gap:6px;background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:9px 16px;font-size:13px;color:var(--color-text-primary);cursor:pointer;white-space:nowrap;flex-shrink:0}
+  .btn-pdf:hover{background:var(--color-background-secondary)}
+  .section-label{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin:1.25rem 0 0.6rem;letter-spacing:0.05em;text-transform:uppercase}
+  .course-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:9px}
+  .course-card.top{border:1.5px solid var(--ires-red)}
+  .top-badge{display:inline-flex;align-items:center;gap:5px;background:var(--ires-red-light);color:var(--ires-red-dark);font-size:11px;padding:3px 10px;border-radius:var(--border-radius-md);margin-bottom:8px}
+  .course-card h4{font-size:15px;font-weight:500;margin:0 0 5px;color:var(--color-text-primary)}
+  .course-card p{font-size:13px;color:var(--color-text-secondary);margin:0 0 10px;line-height:1.5}
+  .course-link{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--ires-teal);text-decoration:none;font-weight:500}
+  .course-link:hover{text-decoration:underline}
+  .restart-btn{margin-top:1.5rem;background:none;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:9px 16px;font-size:13px;color:var(--color-text-secondary);cursor:pointer}
+  .restart-btn:hover{background:var(--color-background-secondary)}
+
+  .brand-bar{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:0.5px solid var(--color-border-tertiary)}
+  .brand-dot{width:10px;height:10px;border-radius:50%;background:var(--ires-red)}
+  .brand-dot2{width:10px;height:10px;border-radius:50%;background:var(--ires-teal)}
+  .brand-name{font-size:13px;font-weight:500;color:var(--color-text-secondary);letter-spacing:0.03em}
+</style>
+
+<div class="wrap" id="quizWrap">
+  <div class="brand-bar">
+    <div class="brand-dot"></div><div class="brand-dot2"></div>
+    <span class="brand-name">Indepth Research Institute (IRES) — Land & Governance</span>
+  </div>
+  <div class="quiz-header">
+    <div class="time-pill"><i class="ti ti-clock" aria-hidden="true"></i> Takes about 2 minutes</div>
+    <h1>Find your ideal IRES land training</h1>
+    <p>Answer 5 quick questions to get a personalised course recommendation — then download your results as a PDF.</p>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+  <div class="step active" id="step1">
+    <div class="q-label">Question 1 of 5</div>
+    <div class="q-text">Which best describes your professional role?</div>
+    <div class="options">
+      <button class="opt-btn" onclick="pick(this,'role','gov')"><div class="opt-icon"><i class="ti ti-building-bank" aria-hidden="true"></i></div>Government official / land registrar</button>
+      <button class="opt-btn" onclick="pick(this,'role','consultant')"><div class="opt-icon"><i class="ti ti-briefcase" aria-hidden="true"></i></div>Private sector consultant / project manager</button>
+      <button class="opt-btn" onclick="pick(this,'role','academic')"><div class="opt-icon"><i class="ti ti-school" aria-hidden="true"></i></div>Academic / researcher</button>
+      <button class="opt-btn" onclick="pick(this,'role','ngo')"><div class="opt-icon"><i class="ti ti-heart-handshake" aria-hidden="true"></i></div>NGO / civil society practitioner</button>
+    </div>
+    <div class="nav-row"><span class="step-count">Step 1 / 5</span><button class="btn-next" id="next1" onclick="goNext(2)">Next <i class="ti ti-arrow-right" aria-hidden="true"></i></button></div>
+  </div>
+
+  <div class="step" id="step2">
+    <div class="q-label">Question 2 of 5</div>
+    <div class="q-text">What is your primary area of work?</div>
+    <div class="options">
+      <button class="opt-btn" onclick="pick(this,'area','admin')"><div class="opt-icon"><i class="ti ti-map" aria-hidden="true"></i></div>Land administration & records management</button>
+      <button class="opt-btn" onclick="pick(this,'area','resettlement')"><div class="opt-icon"><i class="ti ti-users" aria-hidden="true"></i></div>Resettlement, compensation & social safeguards</button>
+      <button class="opt-btn" onclick="pick(this,'area','policy')"><div class="opt-icon"><i class="ti ti-file-description" aria-hidden="true"></i></div>Land policy, governance & legal frameworks</button>
+      <button class="opt-btn" onclick="pick(this,'area','tech')"><div class="opt-icon"><i class="ti ti-cpu" aria-hidden="true"></i></div>GIS, surveying & digital land systems</button>
+      <button class="opt-btn" onclick="pick(this,'area','valuation')"><div class="opt-icon"><i class="ti ti-coin" aria-hidden="true"></i></div>Land valuation, taxation & compensation</button>
+    </div>
+    <div class="nav-row"><button class="btn-back" onclick="goBack(1)"><i class="ti ti-arrow-left" aria-hidden="true"></i> Back</button><span class="step-count">Step 2 / 5</span><button class="btn-next" id="next2" onclick="goNext(3)">Next <i class="ti ti-arrow-right" aria-hidden="true"></i></button></div>
+  </div>
+
+  <div class="step" id="step3">
+    <div class="q-label">Question 3 of 5</div>
+    <div class="q-text">What is your current level of experience in land administration?</div>
+    <div class="options">
+      <button class="opt-btn" onclick="pick(this,'level','beginner')"><div class="opt-icon"><i class="ti ti-seedling" aria-hidden="true"></i></div>Beginner — new to the field</button>
+      <button class="opt-btn" onclick="pick(this,'level','mid')"><div class="opt-icon"><i class="ti ti-trending-up" aria-hidden="true"></i></div>Intermediate — some experience, looking to deepen skills</button>
+      <button class="opt-btn" onclick="pick(this,'level','senior')"><div class="opt-icon"><i class="ti ti-award" aria-hidden="true"></i></div>Senior — experienced, seeking advanced or specialised knowledge</button>
+    </div>
+    <div class="nav-row"><button class="btn-back" onclick="goBack(2)"><i class="ti ti-arrow-left" aria-hidden="true"></i> Back</button><span class="step-count">Step 3 / 5</span><button class="btn-next" id="next3" onclick="goNext(4)">Next <i class="ti ti-arrow-right" aria-hidden="true"></i></button></div>
+  </div>
+
+  <div class="step" id="step4">
+    <div class="q-label">Question 4 of 5</div>
+    <div class="q-text">What outcome are you most hoping to achieve from training?</div>
+    <div class="options">
+      <button class="opt-btn" onclick="pick(this,'goal','practical')"><div class="opt-icon"><i class="ti ti-tool" aria-hidden="true"></i></div>Gain practical, hands-on technical skills</button>
+      <button class="opt-btn" onclick="pick(this,'goal','policy')"><div class="opt-icon"><i class="ti ti-scale" aria-hidden="true"></i></div>Strengthen policy analysis & reform capabilities</button>
+      <button class="opt-btn" onclick="pick(this,'goal','manage')"><div class="opt-icon"><i class="ti ti-sitemap" aria-hidden="true"></i></div>Improve programme or project management</button>
+      <button class="opt-btn" onclick="pick(this,'goal','research')"><div class="opt-icon"><i class="ti ti-microscope" aria-hidden="true"></i></div>Deepen research & monitoring capabilities</button>
+    </div>
+    <div class="nav-row"><button class="btn-back" onclick="goBack(3)"><i class="ti ti-arrow-left" aria-hidden="true"></i> Back</button><span class="step-count">Step 4 / 5</span><button class="btn-next" id="next4" onclick="goNext(5)">Next <i class="ti ti-arrow-right" aria-hidden="true"></i></button></div>
+  </div>
+
+  <div class="step" id="step5">
+    <div class="q-label">Question 5 of 5</div>
+    <div class="q-text">Which challenge is most pressing in your current work?</div>
+    <div class="options">
+      <button class="opt-btn" onclick="pick(this,'challenge','dispute')"><div class="opt-icon"><i class="ti ti-gavel" aria-hidden="true"></i></div>Land disputes & conflict resolution</button>
+      <button class="opt-btn" onclick="pick(this,'challenge','digital')"><div class="opt-icon"><i class="ti ti-device-laptop" aria-hidden="true"></i></div>Digitising or modernising land records</button>
+      <button class="opt-btn" onclick="pick(this,'challenge','tenure')"><div class="opt-icon"><i class="ti ti-home-check" aria-hidden="true"></i></div>Securing land tenure & customary rights</button>
+      <button class="opt-btn" onclick="pick(this,'challenge','planning')"><div class="opt-icon"><i class="ti ti-map-2" aria-hidden="true"></i></div>Land use planning & urban/rural management</button>
+      <button class="opt-btn" onclick="pick(this,'challenge','displacement')"><div class="opt-icon"><i class="ti ti-home-move" aria-hidden="true"></i></div>Managing displacement & resettlement</button>
+    </div>
+    <div class="nav-row"><button class="btn-back" onclick="goBack(4)"><i class="ti ti-arrow-left" aria-hidden="true"></i> Back</button><span class="step-count">Step 5 / 5</span><button class="btn-next" id="next5" onclick="goNext(6)">Next <i class="ti ti-arrow-right" aria-hidden="true"></i></button></div>
+  </div>
+
+  <div class="step" id="step6">
+    <div class="email-wrap">
+      <h2>Almost there — where should we send your results?</h2>
+      <p>Enter your details to unlock your personalised course recommendations. We'll never share your information, and you can unsubscribe at any time.</p>
+      <label for="fname">First name</label>
+      <input type="text" id="fname" placeholder="e.g. Amina" />
+      <label for="femail">Work email address</label>
+      <input type="email" id="femail" placeholder="you@organisation.org" />
+      <div class="err" id="emailErr">Please enter a valid email address.</div>
+      <div class="privacy-note"><i class="ti ti-shield-check" style="font-size:14px;flex-shrink:0;margin-top:2px" aria-hidden="true"></i><span>IRES respects your privacy. Your details are used only to send you relevant training information.</span></div>
+      <button class="btn-submit" onclick="submitEmail()">See my course recommendations <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+    </div>
+    <div style="margin-top:1rem"><button class="btn-back" onclick="goBack(5)"><i class="ti ti-arrow-left" aria-hidden="true"></i> Back</button></div>
+  </div>
+</div>
+
+<div class="results-wrap" id="resultsWrap">
+  <div class="brand-bar">
+    <div class="brand-dot"></div><div class="brand-dot2"></div>
+    <span class="brand-name">Indepth Research Institute (IRES) — Land & Governance</span>
+  </div>
+  <div class="results-header">
+    <div>
+      <h3>Your recommended courses</h3>
+      <p id="greetLine">Based on your answers, here are the IRES courses that best match your profile.</p>
+    </div>
+    <button class="btn-pdf" onclick="downloadPDF()"><i class="ti ti-file-download" aria-hidden="true"></i> Download PDF</button>
+  </div>
+  <div id="resultsContent"></div>
+  <button class="restart-btn" onclick="restart()"><i class="ti ti-refresh" aria-hidden="true"></i> Start over</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const answers={};let userName='',userEmail='';
+const courses=[
+  {id:'lis',title:'Modern Land Administration Systems & LIS',url:'https://www.indepthresearch.org/course/modern-land-administration-systems-and-land-information-systems-lis-training',desc:'Covers digital land management, land information systems, and modernising land administration infrastructure.',tags:['admin','tech','gov','consultant','practical','digital']},
+  {id:'tenure',title:'Land Tenure Security & Formalization of Customary Rights',url:'https://www.indepthresearch.org/course/land-tenure-security-and-formalization-of-customary-rights',desc:'Explores approaches to securing land rights, formalising customary tenure, and protecting vulnerable communities.',tags:['policy','tenure','gov','ngo','academic','research']},
+  {id:'governance',title:'Land Governance & Institutional Reform',url:'https://www.indepthresearch.org/course/land-governance-and-institutional-reform',desc:'Focuses on reforming land institutions, governance frameworks, and building accountable land sector systems.',tags:['policy','gov','academic','research','senior']},
+  {id:'planning',title:'Land Use Planning & Management',url:'https://www.indepthresearch.org/course/land-use-planning-and-management-training',desc:'Covers frameworks for strategic land use planning in urban and rural contexts, balancing competing interests.',tags:['policy','admin','gov','consultant','manage','planning']},
+  {id:'digitisation',title:'Digitization of Land Records & Cadastral Mapping',url:'https://www.indepthresearch.org/course/digitization-of-land-records-and-cadastral-mapping-training-course',desc:'Hands-on training in converting paper-based land records to digital cadastral systems and GIS platforms.',tags:['tech','admin','gov','consultant','practical','digital']},
+  {id:'valuation',title:'Land Valuation for Taxation & Compensation',url:'https://www.indepthresearch.org/course/land-valuation-for-taxation-and-compensation-training-course',desc:'Provides skills in land valuation methodologies for taxation, expropriation, and fair compensation.',tags:['valuation','gov','consultant','practical','displacement','manage']},
+  {id:'resettlement',title:'Land Acquisition, Involuntary Resettlement & Compensation Planning',url:'https://www.indepthresearch.org/course/land-acquisition-involuntary-resettlement-and-compensation-planning-course',desc:'Comprehensive training on planning and managing resettlement, compensation, and social impact processes.',tags:['resettlement','consultant','gov','ngo','manage','displacement','practical']},
+  {id:'gis',title:'GIS for Land Management',url:'https://www.indepthresearch.org/course/geographic-information-systems-gis-for-land-management-course',desc:'Builds practical GIS skills for mapping, spatial analysis, and land records management.',tags:['tech','admin','consultant','academic','practical','digital','planning']},
+  {id:'dispute',title:'Land Dispute Resolution & Conflict Management',url:'https://www.indepthresearch.org/course/land-dispute-resolution-and-conflict-management-course',desc:'Covers mediation, arbitration, and conflict resolution tools specific to land disputes.',tags:['policy','gov','ngo','academic','dispute','manage']},
+  {id:'legal',title:'Legal & Regulatory Frameworks in Land Administration',url:'https://www.indepthresearch.org/course/legal-and-regulatory-frameworks-in-land-administration-course',desc:'Examines national and international legal instruments governing land administration and property rights.',tags:['policy','gov','academic','consultant','research','senior']},
+  {id:'me',title:'Monitoring & Evaluation of Land Governance Programs',url:'https://www.indepthresearch.org/course/monitoring-and-evaluation-of-land-governance-programs-course',desc:'Equips professionals to design and implement M&E systems for land governance interventions.',tags:['admin','policy','gov','ngo','academic','research','manage']},
+  {id:'urbanrural',title:'Urban & Rural Land Policy Formulation & Implementation',url:'https://www.indepthresearch.org/course/urban-and-rural-land-policy-formulation-and-implementation-course',desc:'Guides participants through land policy design, stakeholder engagement, and implementation strategies.',tags:['policy','gov','academic','consultant','research','planning','senior']},
+  {id:'surveying',title:'Surveying Techniques & Technologies in Land Administration',url:'https://www.indepthresearch.org/course/surveying-techniques-and-technologies-in-land-administration-course',desc:'Practical training in modern surveying instruments, GPS, and drone-based technologies for land demarcation.',tags:['tech','admin','gov','consultant','practical','digital','planning']}
+];
+const labelMap={role:{gov:'Government official / land registrar',consultant:'Private sector consultant / project manager',academic:'Academic / researcher',ngo:'NGO / civil society practitioner'},area:{admin:'Land administration & records management',resettlement:'Resettlement, compensation & social safeguards',policy:'Land policy, governance & legal frameworks',tech:'GIS, surveying & digital land systems',valuation:'Land valuation, taxation & compensation'},level:{beginner:'Beginner',mid:'Intermediate',senior:'Senior'},goal:{practical:'Practical hands-on skills',policy:'Policy analysis & reform',manage:'Programme / project management',research:'Research & monitoring'},challenge:{dispute:'Land disputes & conflict resolution',digital:'Digitising land records',tenure:'Securing land tenure',planning:'Land use planning',displacement:'Managing displacement & resettlement'}};
+let computedResults=[];
+function pick(btn,key,val){btn.closest('.options').querySelectorAll('.opt-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');answers[key]=val;const sid=btn.closest('.step').id;const nb=document.getElementById('next'+sid.replace('step',''));if(nb)nb.classList.add('ready');}
+function goNext(n){document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));document.getElementById('step'+n).classList.add('active');document.getElementById('progressFill').style.width=(Math.min((n-1)/6*100,100))+'%';}
+function goBack(n){document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));document.getElementById('step'+n).classList.add('active');document.getElementById('progressFill').style.width=(Math.min((n-1)/6*100,100))+'%';}
+function submitEmail(){const nv=document.getElementById('fname').value.trim(),ev=document.getElementById('femail').value.trim(),err=document.getElementById('emailErr');if(!ev||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(ev)){err.style.display='block';return;}err.style.display='none';userName=nv||'there';userEmail=ev;showResults();}
+function score(c){return[answers.role,answers.area,answers.level,answers.goal,answers.challenge].reduce((s,k)=>s+(k&&c.tags.includes(k)?1:0),0);}
+function showResults(){
+  computedResults=courses.map(c=>({...c,score:score(c)})).sort((a,b)=>b.score-a.score);
+  const top=computedResults[0],others=computedResults.slice(1,4);
+  document.getElementById('greetLine').textContent=userName!=='there'?`Hi ${userName}, here are the IRES courses that best match your profile.`:'Based on your answers, here are the IRES courses that best match your profile.';
+  let html='<div class="section-label">Top match</div>';
+  html+=`<div class="course-card top"><span class="top-badge"><i class="ti ti-star" aria-hidden="true"></i> Best fit for you</span><h4>${top.title}</h4><p>${top.desc}</p><a class="course-link" href="${top.url}" target="_blank">View course <i class="ti ti-external-link" aria-hidden="true"></i></a></div>`;
+  html+='<div class="section-label">Also recommended</div>';
+  others.forEach(c=>{html+=`<div class="course-card"><h4>${c.title}</h4><p>${c.desc}</p><a class="course-link" href="${c.url}" target="_blank">View course <i class="ti ti-external-link" aria-hidden="true"></i></a></div>`;});
+  document.getElementById('resultsContent').innerHTML=html;
+  document.getElementById('quizWrap').style.display='none';
+  document.getElementById('resultsWrap').classList.add('show');
+}
+function downloadPDF(){
+  const {jsPDF}=window.jspdf;if(!jsPDF){alert('PDF library still loading — please try again.');return;}
+  const doc=new jsPDF({unit:'mm',format:'a4'});const W=210,margin=18,cw=W-margin*2;let y=0;
+  function addPage(){doc.addPage();y=18;}function checkY(n){if(y+n>270)addPage();}
+  doc.setFillColor(161,30,34);doc.rect(0,0,W,28,'F');
+  doc.setFillColor(30,161,157);doc.rect(0,24,W,4,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(16);doc.setFont('helvetica','bold');
+  doc.text('IRES Course Recommendation',margin,12);
+  doc.setFontSize(10);doc.setFont('helvetica','normal');
+  doc.text('Indepth Research Institute  |  indepthresearch.org  |  Land & Governance',margin,20);
+  y=38;
+  doc.setTextColor(30,30,30);doc.setFontSize(13);doc.setFont('helvetica','bold');
+  doc.text(userName!=='there'?`Hi ${userName},`:'Your results',margin,y);y+=7;
+  doc.setFontSize(10);doc.setFont('helvetica','normal');doc.setTextColor(90,90,90);
+  const intro=doc.splitTextToSize('Based on your quiz responses, we have identified the IRES training courses that best match your professional profile, experience level, and development goals.',cw);
+  doc.text(intro,margin,y);y+=intro.length*5+5;
+  const profileLines=[['Role',labelMap.role[answers.role]||answers.role],['Area of work',labelMap.area[answers.area]||answers.area],['Experience',labelMap.level[answers.level]||answers.level],['Training goal',labelMap.goal[answers.goal]||answers.goal],['Key challenge',labelMap.challenge[answers.challenge]||answers.challenge]];
+  const boxH=10+profileLines.length*6+4;checkY(boxH+4);
+  doc.setFillColor(240,252,252);doc.setDrawColor(30,161,157);doc.roundedRect(margin,y,cw,boxH,3,3,'FD');
+  doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(21,124,121);
+  doc.text('Your profile summary',margin+4,y+7);
+  profileLines.forEach(([k,v],i)=>{doc.setFont('helvetica','normal');doc.setTextColor(100,100,100);doc.text(k+':',margin+4,y+13+i*6);doc.setTextColor(30,30,30);doc.text(v||'-',margin+42,y+13+i*6);});
+  y+=boxH+10;
+  checkY(16);doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(161,30,34);
+  doc.text('Top match',margin,y);y+=7;
+  const top=computedResults[0],topOthers=computedResults.slice(1,4);
+  function drawCourse(c,isTop){
+    const dl=doc.splitTextToSize(c.desc,cw-8);const ch=7+6+dl.length*4.5+8;checkY(ch+4);
+    if(isTop){doc.setFillColor(252,242,242);doc.setDrawColor(161,30,34);doc.setLineWidth(0.6);}
+    else{doc.setFillColor(250,250,250);doc.setDrawColor(200,200,200);doc.setLineWidth(0.4);}
+    doc.roundedRect(margin,y,cw,ch,3,3,'FD');
+    doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(20,20,20);doc.text(c.title,margin+4,y+7);
+    doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(70,70,70);doc.text(dl,margin+4,y+13);
+    const ly=y+13+dl.length*4.5+2;doc.setTextColor(30,161,157);doc.text(c.url,margin+4,ly);doc.link(margin+4,ly-3,cw-8,5,{url:c.url});
+    y+=ch+4;
+  }
+  drawCourse(top,true);y+=4;
+  checkY(12);doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(161,30,34);
+  doc.text('Also recommended',margin,y);y+=7;
+  topOthers.forEach(c=>drawCourse(c,false));
+  const pc=doc.internal.getNumberOfPages();
+  for(let i=1;i<=pc;i++){doc.setPage(i);doc.setDrawColor(220,220,220);doc.setLineWidth(0.3);doc.line(margin,285,W-margin,285);doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(150,150,150);doc.text('Indepth Research Institute (IRES)  |  indepthresearch.org  |  '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}),margin,290);doc.text('Page '+i+' of '+pc,W-margin,290,{align:'right'});}
+  doc.save(`IRES_Course_Recommendations${userName!=='there'?'_'+userName.replace(/\s+/g,'_'):''}.pdf`);
+}
+function restart(){Object.keys(answers).forEach(k=>delete answers[k]);userName='';userEmail='';document.querySelectorAll('.opt-btn').forEach(b=>b.classList.remove('selected'));document.querySelectorAll('.btn-next').forEach(b=>b.classList.remove('ready'));document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));document.getElementById('step1').classList.add('active');document.getElementById('progressFill').style.width='0%';document.getElementById('fname').value='';document.getElementById('femail').value='';document.getElementById('quizWrap').style.display='block';document.getElementById('resultsWrap').classList.remove('show');}
+</script>
